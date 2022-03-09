@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% set title = 'Create a List' %}
+{% block content %}
+
+<div class="short_content" style="width:90%; margin:0 auto;">
+    <h1>Create a List</h1>
+    <form action="{{ url_for('new') }}" method="post">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Task" aria-label="Task" 
+                aria-describedby="button-addon2" name="task">
+            <button type="submit" class="btn btn-outline-secondary" type="button" id="button-addon2">Add Task</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

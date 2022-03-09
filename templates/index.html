@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% set title = 'Todo List Home Page' %}
+{% block content %}
+
+<div class="short_content" style="text-align: center;">
+    <h1>Simple to-do lists that you can access anywhere</h1>
+    <br>
+    <a href="{{ url_for('new') }}" class="btn btn-primary">Create Your List</a>
+</div>
+
+{% endblock %}

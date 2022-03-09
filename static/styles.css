@@ -1,0 +1,10 @@
+/* Keeps footer at bottom when needed */
+.short_content {
+  min-height: calc(100vh - 160px);
+}
+
+.footer {
+  margin: 50px 0px 0px;
+  text-align: center;
+  padding: 15px;
+}
