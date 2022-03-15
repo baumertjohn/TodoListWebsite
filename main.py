@@ -21,14 +21,32 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# User Table
+
+# # User Table
+# class Task(db.Model):
+#     id = db.Column(db.INTEGER, primary_key=True)
+#     email = db.Column(db.VARCHAR(100), unique=True, nullable=False)
+#     password = db.Column(db.VARCHAR(100), nullable=False)
+#     task = db.Column(db.VARCHAR(200), unique=True, nullable=False)
+#     start = db.Column(db.DATE(), nullable=False)
+#     end = db.Column(db.DATE())
+#     status = db.Column(db.BOOLEAN(), nullable=False)
 
 
-class Task(db.Model):
+# TABLE CONFIGURATION
+class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.INTEGER, primary_key=True)
     email = db.Column(db.VARCHAR(100), unique=True, nullable=False)
     password = db.Column(db.VARCHAR(100), nullable=False)
-    task = db.Column(db.VARCHAR(200), unique=True, nullable=False)
+
+
+class Task(db.Model):
+    __tablename__ = 'tasks'
+    id = db.Column(db.INTEGER, primary_key=True)
+    # Create Foreign Key to link to ID of user
+    author_id = db.Column(db.INTEGER, db.ForeignKey('users.id'))
+    task = db.Column(db.VARCHAR(200), nullable=False)
     start = db.Column(db.DATE(), nullable=False)
     end = db.Column(db.DATE())
     status = db.Column(db.BOOLEAN(), nullable=False)
@@ -46,9 +64,6 @@ class Task(db.Model):
 # db.session.commit()
 
 
-all_tasks = db.session.query(Task).all()
-
-
 # Store user ID for secure session
 @login_manager.user_loader
 def load_user(user_id):
@@ -64,27 +79,30 @@ def home():
 def new():
     if request.method == 'POST':
         task = request.form.get('task')
-        # Check for temp user and delete
-        if temp_user := Task.query.filter_by(email='no_email').first():
-            db.session.delete(temp_user)
-            db.session.commit()
         # Start temp user
-        temp_user = Task(email='no_email',
-                         password='no_password',
-                         task=task,
+        temp_user = Task(task=task,
                          start=date.today(),
                          status=True)
         db.session.add(temp_user)
         db.session.commit()
         # open list page with new data
-        return render_template('list.html', task=task)
+        return redirect(url_for('list_page'))
         # change header to allow register / login
     return render_template('new.html')
 
 
 @app.route('/list', methods=['GET', 'POST'])
 def list_page():
-    return render_template('list.html')
+    if request.method == 'POST':
+        task = request.form.get('task')
+        add_task = Task(task=task,
+                        start=date.today(),
+                        status=True)
+        db.session.add(add_task)
+        db.session.commit()
+        return redirect(url_for('list_page'))
+    tasks = Task.query.all()
+    return render_template('list.html', all_tasks=tasks)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -124,6 +142,15 @@ def register():
             login_user(new_user)
             return redirect(url_for('home'))
     return render_template('register.html', error=error)
+
+
+@app.route('/delete_task/<int:task_id>')
+def delete_task(task_id):
+    print(task_id)
+    task_to_delete = Task.query.get(task_id)
+    db.session.delete(task_to_delete)
+    db.session.commit()
+    return redirect(url_for('list_page'))
 
 
 if __name__ == '__main__':

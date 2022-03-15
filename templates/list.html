@@ -6,14 +6,19 @@
     <h1>My to-do list</h1>
     <div>
         <ul class="list-group">
-            <li class="list-group-item">{{ task }}</li>
+            {% for task in all_tasks %}
+            <li class="list-group-item"><a href="{{ url_for('delete_task', task_id=task.id) }}"><i
+                        class="fa-solid fa-x"></i></a> - {{ task.task }}</li>
+            {% endfor %}
         </ul>
     </div>
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Task" aria-label="Task" aria-describedby="button-addon2"
-            name="task">
-        <button type="submit" class="btn btn-outline-secondary" type="button" id="button-addon2">Add Task</button>
-    </div>
+    <form action="{{ url_for('list_page') }}" method="post">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Task" aria-label="Task"
+                aria-describedby="button-addon2" name="task">
+            <button type="submit" class="btn btn-outline-secondary" type="button" id="button-addon2">Add Task</button>
+        </div>
+    </form>
 </div>
 
 {% endblock %}
