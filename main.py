@@ -12,6 +12,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'gHYowMzVMDhaVTyUxCyO6A71PVF5ac98'
 
 # Connect to the users database
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///tasks.db"
@@ -34,7 +35,7 @@ login_manager.init_app(app)
 
 
 # TABLE CONFIGURATION
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.INTEGER, primary_key=True)
     email = db.Column(db.VARCHAR(100), unique=True, nullable=False)
@@ -67,7 +68,7 @@ class Task(db.Model):
 # Store user ID for secure session
 @login_manager.user_loader
 def load_user(user_id):
-    return Task.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 
 @app.route('/')
@@ -112,7 +113,7 @@ def login():
         page = request.args.get('page', None)
         email = request.form.get('email')
         password = request.form.get('password')
-        user = Task.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
                 login_user(user)
@@ -124,18 +125,25 @@ def login():
     return render_template('login.html', error=error)
 
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     error = None
     if request.method == 'POST':
-        if Task.query.filter_by(email=request.form.get('email')).first():
+        if User.query.filter_by(email=request.form.get('email')).first():
             error = "That email is already register, log in instead."
         else:
             # Hash the user password before adding to the database
             hash_password = generate_password_hash(request.form.get('password'),
                                                    method='pbkdf2:sha256',
                                                    salt_length=8)
-            new_user = Task(email=request.form.get('email'),
+            new_user = User(email=request.form.get('email'),
                             password=hash_password)
             db.session.add(new_user)
             db.session.commit()
@@ -146,7 +154,6 @@ def register():
 
 @app.route('/delete_task/<int:task_id>')
 def delete_task(task_id):
-    print(task_id)
     task_to_delete = Task.query.get(task_id)
     db.session.delete(task_to_delete)
     db.session.commit()

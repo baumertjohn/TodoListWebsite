@@ -16,7 +16,12 @@
 <body>
     <nav class="navbar navbar-dark bg-dark">
         <div class="container-fluid justify-content-end">
+            {% if current_user.is_authenticated %}
+            <div style="color: white; margin-right: 20px;">{{ current_user.email }}</div>
+            <a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline-light">Log Out</a>
+            {% else %}
             <a href="{{ url_for('login') }}" class="btn btn-sm btn-outline-light">Log In / Register</a>
+            {% endif %}
         </div>
     </nav>
     <!-- Header -->
