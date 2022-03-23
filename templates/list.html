@@ -1,43 +1,66 @@
 {% extends 'base.html' %}
 {% set title = 'My List' %}
 {% block content %}
+{% if current_user.is_authenticated %}
+{% set user = current_user.id %}
+{% else %}
+{% set user = None %}
+{% endif %}
 
-<div class="short_content" style="width:90; margin:0 auto;">
+<div class="short_content" style="width:90%; margin:0 auto;">
     <h1>My to-do list</h1>
-    <div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Delete</th>
-                    <th scope="col">Task</th>
-                    <th scope="col">Start</th>
-                    <th scope="col">Finish</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in all_tasks %}
-                <tr>
-                    <th scope="row"><a href="{{ url_for('delete_task', task_id=task.id) }}"><i
-                                class="fa-solid fa-x"></i></a></th>
-                    <td>{{ task.task }}</td>
-                    <td>{{ task.start }}</td>
-                    {% if task.end == None %}
-                    <td></td>
-                    {% else %}
-                    <td>{{ task.end }}</td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div style="width: 90%; margin: 0 auto;">
+        <ul class="list-group list-group-flush">
+            {% for task in all_tasks %}
+            {% if task.author_id == user and task.status == 1 %}
+            <li class="list-group-item">
+                <a href="{{ url_for('check_task', task_id=task.id) }}" class="check" style="text-decoration: none;">
+                    <i class="fa-regular fa-square-full"></i>
+                    <i class="fa-solid fa-check"></i>
+                </a>
+                &ensp;
+                <task style="font-size: 150%;">{{ task.task }}</task>
+                &emsp;<i>-started-</i>&emsp;
+                {{ task.start }}
+                &emsp;
+                {% if task.end == None %}
+                &emsp;
+                {% else %}
+                {{ task.end }}
+                {% endif %}
+            </li>
+            {% endif %}
+            {% endfor %}
+            <li class="list-group-item">
+                <form action="{{ url_for('list_page') }}" method="post">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Add a Task" aria-label="Task"
+                            aria-describedby="button-addon2" name="task">
+                        <button type="submit" class="btn btn-outline-secondary" type="button" id="button-addon2">Add
+                            Task</button>
+                    </div>
+                </form>
+            </li>
+        </ul>
     </div>
-    <form action="{{ url_for('list_page') }}" method="post">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Task" aria-label="Task"
-                aria-describedby="button-addon2" name="task">
-            <button type="submit" class="btn btn-outline-secondary" type="button" id="button-addon2">Add Task</button>
+    <div style="padding-top: 50px;">
+        <h2>Done</h2>
+        <div style="width: 90%; margin: 0 auto;">
+            <ul class="list-group list-group-flush">
+                {% for task in all_tasks %}
+                {% if task.author_id == user and task.status == 0 %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('delete_task', task_id=task.id) }}" style="text-decoration: none;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </a>
+                    &ensp;
+                    <del>{{ task.task }}</del>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
         </div>
-    </form>
+    </div>
 </div>
 
 {% endblock %}

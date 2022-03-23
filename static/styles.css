@@ -8,3 +8,11 @@
   text-align: center;
   padding: 15px;
 }
+
+.check:hover .fa-square-full,
+.check .fa-check {
+  display: none;
+}
+.check:hover .fa-check {
+  display: inline;
+}

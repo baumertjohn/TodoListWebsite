@@ -23,17 +23,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-# # User Table
-# class Task(db.Model):
-#     id = db.Column(db.INTEGER, primary_key=True)
-#     email = db.Column(db.VARCHAR(100), unique=True, nullable=False)
-#     password = db.Column(db.VARCHAR(100), nullable=False)
-#     task = db.Column(db.VARCHAR(200), unique=True, nullable=False)
-#     start = db.Column(db.DATE(), nullable=False)
-#     end = db.Column(db.DATE())
-#     status = db.Column(db.BOOLEAN(), nullable=False)
-
-
 # TABLE CONFIGURATION
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
@@ -55,14 +44,6 @@ class Task(db.Model):
 
 # Create initial database
 # db.create_all()
-# Create a user
-# temp_user = Task(email='admin@admin.com',
-#                  password='1234',
-#                  task='Sample Task',
-#                  start=date.today(),
-#                  status=True)
-# db.session.add(temp_user)
-# db.session.commit()
 
 
 # Store user ID for secure session
@@ -96,7 +77,8 @@ def new():
 def list_page():
     if request.method == 'POST':
         task = request.form.get('task')
-        add_task = Task(task=task,
+        add_task = Task(author_id=current_user.id,
+                        task=task,
                         start=date.today(),
                         status=True)
         db.session.add(add_task)
@@ -110,14 +92,14 @@ def list_page():
 def login():
     error = None
     if request.method == 'POST':
-        page = request.args.get('page', None)
+        page = request.args.get('page', None)  # Do I need this?
         email = request.form.get('email')
         password = request.form.get('password')
         user = User.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
                 login_user(user)
-                return redirect(page)
+                return redirect(url_for('list_page'))
             else:
                 error = 'Password incorrect, please try again.'
         else:
@@ -156,6 +138,14 @@ def register():
 def delete_task(task_id):
     task_to_delete = Task.query.get(task_id)
     db.session.delete(task_to_delete)
+    db.session.commit()
+    return redirect(url_for('list_page'))
+
+
+@app.route('/check_task/<int:task_id>')
+def check_task(task_id):
+    task_to_check = Task.query.get(task_id)
+    task_to_check.status = 0
     db.session.commit()
     return redirect(url_for('list_page'))
 
