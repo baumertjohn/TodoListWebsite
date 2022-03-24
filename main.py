@@ -38,7 +38,6 @@ class Task(db.Model):
     author_id = db.Column(db.INTEGER, db.ForeignKey('users.id'))
     task = db.Column(db.VARCHAR(200), nullable=False)
     start = db.Column(db.DATE(), nullable=False)
-    end = db.Column(db.DATE())
     status = db.Column(db.BOOLEAN(), nullable=False)
 
 
@@ -59,18 +58,10 @@ def home():
 
 @app.route('/new', methods=['GET', 'POST'])
 def new():
-    if request.method == 'POST':
-        task = request.form.get('task')
-        # Start temp user
-        temp_user = Task(task=task,
-                         start=date.today(),
-                         status=True)
-        db.session.add(temp_user)
-        db.session.commit()
-        # open list page with new data
+    if current_user.is_authenticated:
         return redirect(url_for('list_page'))
-        # change header to allow register / login
-    return render_template('new.html')
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/list', methods=['GET', 'POST'])
@@ -92,7 +83,6 @@ def list_page():
 def login():
     error = None
     if request.method == 'POST':
-        page = request.args.get('page', None)  # Do I need this?
         email = request.form.get('email')
         password = request.form.get('password')
         user = User.query.filter_by(email=email).first()
@@ -130,7 +120,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
-            return redirect(url_for('home'))
+            return redirect(url_for('list_page'))
     return render_template('register.html', error=error)
 
 

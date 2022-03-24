@@ -7,13 +7,13 @@
 {% set user = None %}
 {% endif %}
 
-<div class="short_content" style="width:90%; margin:0 auto;">
+<div class="short_content" style="width:90%; margin:0 auto; color: #2c3531;">
     <h1>My to-do list</h1>
     <div style="width: 90%; margin: 0 auto;">
         <ul class="list-group list-group-flush">
             {% for task in all_tasks %}
             {% if task.author_id == user and task.status == 1 %}
-            <li class="list-group-item">
+            <li class="list-group-item list-color">
                 <a href="{{ url_for('check_task', task_id=task.id) }}" class="check" style="text-decoration: none;">
                     <i class="fa-regular fa-square-full"></i>
                     <i class="fa-solid fa-check"></i>
@@ -31,12 +31,12 @@
             </li>
             {% endif %}
             {% endfor %}
-            <li class="list-group-item">
+            <li class="list-group-item list-color">
                 <form action="{{ url_for('list_page') }}" method="post">
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Add a Task" aria-label="Task"
                             aria-describedby="button-addon2" name="task">
-                        <button type="submit" class="btn btn-outline-secondary" type="button" id="button-addon2">Add
+                        <button type="submit" class="btn btn-secondary" type="button" id="button-addon2">Add
                             Task</button>
                     </div>
                 </form>
@@ -49,7 +49,7 @@
             <ul class="list-group list-group-flush">
                 {% for task in all_tasks %}
                 {% if task.author_id == user and task.status == 0 %}
-                <li class="list-group-item">
+                <li class="list-group-item list-color">
                     <a href="{{ url_for('delete_task', task_id=task.id) }}" style="text-decoration: none;">
                         <i class="fa-solid fa-xmark"></i>
                     </a>

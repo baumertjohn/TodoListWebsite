@@ -16,3 +16,31 @@
 .check:hover .fa-check {
   display: inline;
 }
+
+a {
+  color: #d9b08c;
+}
+
+body {
+  background-color: #d1e8e2;
+}
+
+.btn-secondary {
+  background-color: #116466;
+  border-color: #116466;
+}
+
+.btn-secondary:hover {
+  background-color: #2c3531;
+  border-color: #116466;
+}
+
+.list-color {
+  background-color: #d1e8e2;
+}
+
+.index-image {
+  max-height: 300px;
+  padding-top: 75px;
+  transform: rotate(15deg);
+}

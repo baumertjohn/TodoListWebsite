@@ -3,9 +3,14 @@
 {% block content %}
 
 <div class="short_content" style="text-align: center;">
-    <h1>Simple to-do lists that you can access anywhere</h1>
-    <br>
-    <a href="{{ url_for('new') }}" class="btn btn-primary">Create Your List</a>
+    <div style="padding-top: 50px;">
+        <h1>A simple to-do list in your browser.</h1>
+        <br>
+        <a href="{{ url_for('new') }}" class="btn btn-secondary">Create Your List</a>
+    </div>
+    <div>
+        <img class="index-image" src="{{ url_for('static', filename='notepad.png') }}">
+    </div>
 </div>
 
 {% endblock %}
