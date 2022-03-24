@@ -2,11 +2,7 @@
 
 from datetime import date
 from flask import Flask, redirect, render_template, request, url_for
-# from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-# from flask_wtf import FlaskForm
-# from wtforms import StringField, SelectField, SubmitField
-# from wtforms.validators import DataRequired, URL
 from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
