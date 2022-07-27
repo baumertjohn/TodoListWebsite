@@ -1,16 +1,14 @@
-{% extends 'base.html' %}
-{% set title = 'Todo List Home Page' %}
-{% block content %}
+{% extends 'base.html' %} {% set title = 'Todo List Home Page' %} {% block content %}
 
-<div class="short_content" style="text-align: center;">
-    <div style="padding-top: 50px;">
-        <h1>A simple to-do list in your browser.</h1>
-        <br>
-        <a href="{{ url_for('new') }}" class="btn btn-secondary">Create Your List</a>
-    </div>
-    <div>
-        <img class="index-image" src="{{ url_for('static', filename='notepad.png') }}">
-    </div>
+<div class="short_content" style="text-align: center">
+  <div style="padding-top: 50px">
+    <h1>A simple to-do list in your browser.</h1>
+    <br />
+    <a href="{{ url_for('new') }}" class="btn btn-secondary">Create Your List</a>
+  </div>
+  <div>
+    <img class="index-image" src="{{ url_for('static', filename='notepad.png') }}" />
+  </div>
 </div>
 
 {% endblock %}
